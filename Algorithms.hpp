@@ -13,8 +13,9 @@ namespace ariel{
     public:
       static bool isConnected(const Graph &graph);
       static std::string shortestPath(const Graph &graph, int src, int dest);
-      static bool isContainsCycle(const Graph &graph);
+      static std::string isContainsCycle(const Graph &graph);
       static std::string isBipartite(const Graph &graph);
+      static std::string negativeCycle(const Graph &graph);
       
 
   };

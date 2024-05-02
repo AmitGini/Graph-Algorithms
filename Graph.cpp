@@ -49,19 +49,19 @@ namespace ariel {
 			bool getIsWeightedGraph() const { return this->isWeightedGraph; }
 
 
-			void loadGraph(const Matrix inputMatrix)
+			void loadGraph(const Matrix matrixArg)
 			{
-				if(inputMatrix.empty())
+				if(matrixArg.empty())
 				{
 					throw std::invalid_argument("Invalid graph: The graph is empty.");
 				}
-				else if(inputMatrix.size() != inputMatrix[0].size())
+				else if(matrixArg.size() != matrixArg[0].size())
 				{
 
 					throw std::invalid_argument("Invalid graph: The graph is not a square matrix.");
 				}
 
-				this->myMatrix = inputMatrix;
+				this->myMatrix = matrixArg;
 				updateGraphProperty();
 			}
 
