@@ -4,13 +4,11 @@
 #include <vector>
 
 namespace ariel {
-	
 	typedef std::vector<std::vector<int>> Matrix;
 
 	class Graph {
-
 		private:
-			Matrix myMatrix; // Add the 'using' statement for the std::vector class
+			Matrix myMatrix; 
 			bool isUndirectedGraph;
 			bool isWeightedGraph;
 
@@ -20,11 +18,11 @@ namespace ariel {
 			Graph();
 
 			// Getter methods
-			const Matrix& getMatrix() const { return myMatrix; }
-			bool getIsUndirectedGraph() const { return isUndirectedGraph; }
-			bool getIsWeightedGraph() const { return isWeightedGraph; }
+            const Matrix& getMatrix() const;
+            bool getIsUndirectedGraph() const;
+            bool getIsWeightedGraph() const;
 
-			void loadGraph(const std::vector<std::vector<int>>& matrix);
+			void loadGraph(const Matrix& matrix);
 			void printGraph() const;
 	};
 }

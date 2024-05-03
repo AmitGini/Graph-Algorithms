@@ -39,6 +39,7 @@ Class that represnted graph, using adjacency matrix with intergers values.
 `None`
 ### Algorithms Methods:
 - `static bool isConnected(const Graph &graph)` - Return 1 = True if the graph is connected else, 0 = False
+**Note!** - If the graph contains 0 vertices or 1 vertices method return 1 = True.
 - `static std::string shortestPath(const Graph &graph, int src, int dest)` - Return the minimum weight path, if not weights graph it will return the shortest path between 2 vertices, if there is no path -1.
 - `static std::string isContainsCycle(const Graph &graph)` - If the graph contains Cycle it will return the Cycle else, 0.
 - `static std::string isBipartite(const Graph &graph)` - If the graph can be Bipartite it will return the Bipartite Graphs else return 0.
