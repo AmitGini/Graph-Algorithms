@@ -12,13 +12,13 @@ using ariel::Algorithms;
 #include <vector>
 using namespace std;
 
-int main()
+int mainDemo()
 {
     ariel::Graph g;
     // 3x3 matrix that represents a connected graph.
     vector<vector<int>> graph = {
         {0, 1, 0},
-        {1, 0, 2},
+        {1, 0, 1},
         {0, 1, 0}};
     g.loadGraph(graph); // Load the graph to the object.
 
@@ -74,4 +74,5 @@ int main()
     {
         cout << e.what() << endl; // Should print: "Invalid graph: The graph is not a square matrix."
     }
+    return 0;
 }

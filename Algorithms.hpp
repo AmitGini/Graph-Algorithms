@@ -15,13 +15,11 @@ namespace ariel{
       Algorithms();
       static string bfs(const Graph &graph, int start, int end);
       static string negCycleBF(const Graph &graph, int start, int end);
-      static bool isCycleUtil(int v, std::vector<bool>& visited, 
-                              std::vector<bool>& recursionStack, const Matrix& myMatrix);
 
     public:
       static bool isConnected(const Graph &graph);
-      static string shortestPath(const Graph &graph, int src, int dest);
-      static string isContainsCycle(const Graph &graph);
+      static bool isContainsCycle(const Graph &graph);
+      static string shortestPath(const Graph &graph, size_t src, size_t dest);
       static string isBipartite(const Graph &graph);
       static string negativeCycle(const Graph &graph);
       
