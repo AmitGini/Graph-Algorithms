@@ -80,7 +80,8 @@ string Algorithms::bfs(const Graph &graph, int start, int end) {
                 parent[neighbor] = vertex;
                 queue.push(neighbor);
             } 
-            else if (myMatrix[vertex][neighbor] && neighbor != parent[vertex] && cycleFlag) 
+
+            if (myMatrix[vertex][neighbor] && neighbor != parent[vertex] && cycleFlag)
             {
                 vector<int> cycle;
                 for (size_t i = vertex; i != DEF_MAX_SIZE_T; i = parent[i]) 
@@ -92,12 +93,13 @@ string Algorithms::bfs(const Graph &graph, int start, int end) {
                 if (cycle.size() < 2) continue;
 
                 pathStr += "The cycle is: ";
-                for (size_t i = cycle.size() - 1; i >= 0; --i) 
+                for (size_t i = cycle.size() - 1; i != 0; i--)
                 {
                     pathStr += std::to_string(cycle[i]) + "->";
                 }
                 
                 pathStr = pathStr.substr(0, pathStr.length() - 2);
+                std::cout << pathStr << std::endl;
                 return pathStr;
             }
         }
@@ -115,23 +117,24 @@ string Algorithms::bfs(const Graph &graph, int start, int end) {
             }
         }
         return SUCCESS;
-    }
+    }else{
 
-    if(!visited[dest]){
-        return FAIL;
-    }
+        if(!visited[dest]){
+            return FAIL;
+        }
 
-    std::vector<size_t> path;
-    for(size_t at = dest; at != DEF_MAX_SIZE_T; at = parent[at]){
-        path.push_back(at);
-    }
+        std::vector<size_t> path;
+        for(size_t at = dest; at != DEF_MAX_SIZE_T; at = parent[at]){
+            path.push_back(at);
+        }
 
-    std::reverse(path.begin(), path.end());
-    for (size_t i = 0; i < path.size(); ++i) {
-        pathStr += std::to_string(path[i]);
-        if (i < path.size() - 1) 
-        {
-            pathStr += "->";
+        std::reverse(path.begin(), path.end());
+        for (size_t i = 0; i < path.size(); ++i) {
+            pathStr += std::to_string(path[i]);
+            if (i < path.size() - 1)
+            {
+                pathStr += "->";
+            }
         }
     }
 
@@ -349,7 +352,7 @@ string Algorithms::isBipartite(const Graph &graph)
     }
     B_str = B_str.substr(0, B_str.length() - 2) + "}";  // Remove the last comma and space, and add a closing brace
 
-    return "The graph is bipartite: " + A_str + ", " + B_str + ".";
+    return "The graph is bipartite: " + A_str + ", " + B_str;
 }
 
 // This function is used to check if there is a negative cycle in the graph and return the proper string.
