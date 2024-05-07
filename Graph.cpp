@@ -1,15 +1,15 @@
 #include <iostream>
 #include "Graph.hpp"
 
-#define NONE_WEIGHTED_EDGE 1
-#define NONE_EDGE 0
+constexpr int NONE_WEIGHTED_EDGE = 1;
+constexpr int NONE_EDGE = 0;
 
 using namespace ariel;
 
 typedef std::vector<std::vector<int>> Matrix;
 
 
-Graph::Graph() : isUndirectedGraph(false), isWeightedGraph(false) {}
+Graph::Graph() : isUndirect(false), isWeighted(false) {}
 Graph::~Graph() = default;
 
 
@@ -20,6 +20,8 @@ void Graph::updateGraphProperty()
 	// Transpose the matrix, initial with row, column size.
 	Matrix transpose(this->numVertices, std::vector<int>(this->numVertices));
 
+	bool changeFlagWeight = false;
+
 	// Iterate over the matrix and fill the transpose matrix
 	for (std::size_t vertexA = 0; vertexA < this->numVertices; ++vertexA)
 	{
@@ -29,14 +31,21 @@ void Graph::updateGraphProperty()
 			if ( myMatrix[vertexA][vertexB] != NONE_EDGE ) {
 				this->numEdges++;
 
-				if(myMatrix[vertexA][vertexB] != NONE_WEIGHTED_EDGE && this->isWeightedGraph == false) {
-					this->isWeightedGraph = true;
+				if(myMatrix[vertexA][vertexB] != NONE_WEIGHTED_EDGE && !changeFlagWeight ) {
+					this->isWeighted = true;
+					changeFlagWeight = true;
 				}
 			}
 		}
 	}
 	this->myTransposeMatrix = transpose;
-	this->isUndirectedGraph = (myMatrix == transpose);
+	this->isUndirect = (myMatrix == transpose);
+
+	//If its true the the count of numEdges was not correct.
+	if(this->isUndirect) {
+		this->numEdges = (this->numEdges % 2 == 0) ? (this->numEdges / 2) : ((this->numEdges / 2) - 1);
+	}
+
 }
 
 // Getter for myTransposeMatrix
@@ -46,10 +55,10 @@ const Matrix& Graph::getTransposeMatrix() const {return myTransposeMatrix;}
 const Matrix& Graph::getMatrix() const {return myMatrix;}
 
 // Getter for directed graph status
-bool Graph::getIsUndirectedGraph() const { return this->isUndirectedGraph; }
+bool Graph::isUndirectedGraph() const { return this->isUndirect; }
 
 // Getter for weighted graph status
-bool Graph::getIsWeightedGraph() const { return this->isWeightedGraph; }
+bool Graph::isWeightedGraph() const { return this->isWeighted; }
 
 // Getter for the number of vertices
 size_t Graph::getNumOfVertices() const { return this->numVertices; }
@@ -60,13 +69,19 @@ size_t Graph::getNumOfEdges() const { return this->numEdges; }
 // Load the graph from the input matrix
 void Graph::loadGraph(const Matrix& inputMatrix)
 {
+	// init / clean last uploaded graph.
+	this->numEdges = 0;
+	this->numVertices = 0;
+	this->isWeighted = false;
+	this->isUndirect = false;
+
 	if(inputMatrix.empty())
 	{
 		throw std::invalid_argument("Invalid graph: The graph is empty.");
 	}
-	else if(inputMatrix.size() != inputMatrix[0].size())
-	{
 
+	if(inputMatrix.size() != inputMatrix[0].size())
+	{
 		throw std::invalid_argument("Invalid graph: The graph is not a square matrix.");
 	}
 
@@ -84,26 +99,6 @@ void Graph::loadGraph(const Matrix& inputMatrix)
 	Finally, it prints the number of vertices and edges.
 */
 void Graph::printGraph() const{
-	std::size_t vertices = (this->myMatrix).size();
-	int edges = 0;
-	for (const auto& row : myMatrix) 
-	{
-		for (int cell : row) 
-		{
-			if (cell != 0) 
-			{
-				edges++;
-			}
-		}
-	}
-	
-	// If the graph is undirected, each edge is counted twice
-	if(isUndirectedGraph) 
-	{
-		edges /= 2;
-	}
-	std::cout << "Graph with " << vertices << " vertices and " << edges << " edges." << std::endl;
+	std::cout << "Graph with " << this->numVertices << " vertices and " << this->numEdges << " edges." << std::endl;
 }
-
-
 

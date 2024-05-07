@@ -1,4 +1,3 @@
-#include <iostream>
 #include <string>
 #include <queue>
 #include <limits>
@@ -8,33 +7,24 @@
 #include "Graph.hpp"
 #include "Algorithms.hpp"
 
-
-
-#define NON_NEG_NUM 0
-#define CONNECTED_FLAG (-1)
-#define CYCLE_FLAG (-2)
-#define SUCCESS "1"
-
-
 //Genral
-#define START 0
+constexpr auto START = 0;
 
 // Bipartite
-#define NO_COLOR 0
-#define RED 1
-#define BLUE 2
-#define FAIL "0" // isBipartite / shortestPath
-
-// isContainedCycle / BF / shortestPath / negativeCycle
-#define NONE_EDGE 0
-#define DEF_MAX_INT std::numeric_limits<int>::max()
-#define DEF_MAX_SIZE_T std::numeric_limits<size_t>::max()
+constexpr size_t NO_COLOR = 0;
+constexpr size_t RED = 1;
+constexpr size_t BLUE = 2;
+constexpr const char* FAIL = "0"; // isBipartite / shortestPath
 
 //BFS
-#define WHITE 0
-#define GRAY 1
-#define BLACK 2
+constexpr size_t WHITE = 0;
+constexpr size_t GRAY = 1;
+constexpr size_t BLACK = 2;
 
+// isContainedCycle / BF / shortestPath / negativeCycle
+constexpr size_t NONE_EDGE = 0;
+constexpr int DEF_MAX_INT = std::numeric_limits<int>::max();
+constexpr size_t DEF_MAX_SIZE_T = std::numeric_limits<size_t>::max();
 
 using ariel::Graph;
 using std::string;
@@ -82,16 +72,12 @@ bool Algorithms::isConnected(const Graph &graph)
     }
     const Matrix& transposeMatrix = graph.getTransposeMatrix();
 
-    if (!isConnectedHelper(transposeMatrix)) {
-        return false;
-    }
-
-    return true;
+    return isConnectedHelper(transposeMatrix);
 }
 
 
 
-bool Algorithms::BFS(const Graph &graph, vector<int> &dist, vector<size_t> &prev, size_t src, size_t dest){
+bool Algorithms::BFS(const Graph &graph, vector<int> &dist, size_t src, vector<size_t> &prev, size_t dest){
     // initialize the color, distance, and previous vectors of the source vertex
     vector<size_t> color(graph.getNumOfVertices(), WHITE);
     color[src] = GRAY;
@@ -117,8 +103,7 @@ bool Algorithms::BFS(const Graph &graph, vector<int> &dist, vector<size_t> &prev
             color[vertex] = BLACK;
     }
 
-    if(color[dest] != BLACK) return false;
-    return true;
+    return color[dest] == BLACK;
 }
 
 
@@ -135,11 +120,16 @@ string Algorithms::shortestPath(const Graph &graph, size_t src, size_t dest){
         return FAIL;
     }
 
-    if(!graph.getIsWeightedGraph()) {
-        if(!BFS(graph,dist, prev, src, dest)) return FAIL;
+    if(!graph.isWeightedGraph()) {
+        if(!BFS(graph,dist, src, prev, dest)) {
+            return FAIL;
+        }
+    }
 
-    }else {
-        if(!algoBF(graph,dist, prev)) return FAIL;
+    else {
+        if(!algoBF(graph,dist, prev)) {
+            return FAIL;
+        }
     }
 
     // Reconstruct the path from dest to src
@@ -153,7 +143,7 @@ string Algorithms::shortestPath(const Graph &graph, size_t src, size_t dest){
     reverse(path.begin(), path.end());
 
     // Convert the path to string
-    std::string pathStr = "";
+    std::string pathStr;
 
     for(size_t vertex : path) {
         pathStr += std::to_string(vertex) + "->";
@@ -171,9 +161,12 @@ bool Algorithms::algoDFSVisit(const Graph &graph, size_t vertex,
                                    vector<size_t> &prev) {
     color[vertex] = GRAY;
     discTime[vertex] = ++currTime;
-
+    Matrix edges = graph.getMatrix();
     for(size_t neighbor = START; neighbor < graph.getNumOfVertices(); ++neighbor) {
-        if(graph.getMatrix()[vertex][neighbor] != NONE_EDGE) {
+        if( edges[vertex][neighbor] != NONE_EDGE) {
+            if(graph.isUndirectedGraph() && neighbor == prev[vertex]) {
+                continue;
+            }
             if(color[neighbor] == GRAY) {
                 return true;
             }
@@ -253,7 +246,7 @@ bool Algorithms::isContainsCycle(const Graph &graph){
     vector<int> dist(numVertices, DEF_MAX_INT);
     vector<size_t> prev(numVertices, DEF_MAX_SIZE_T);
 
-    if(graph.getIsWeightedGraph()) {
+    if(graph.isWeightedGraph()) {
         Graph tempGraph;
         tempGraph.loadGraph(edges);
         // Since bellmanford findes negative cycle, Check for positive cycles
@@ -267,20 +260,15 @@ bool Algorithms::isContainsCycle(const Graph &graph){
         return algoBF(tempGraph, dist, prev);
     }
 
-    else if(!graph.getIsUndirectedGraph()){
         return algoDFS(graph,dist,prev);
-
-    }else {
-        return true;
-    }
 }
 
 
 // This method coloring the vertices of the graph in two colors, and return if its 2 coloroble or not.
-bool Algorithms::isBipartiteHelper(const Matrix &edges, size_t numVertices,
-                                       size_t src, std::vector<int> &color) {
+bool Algorithms::isBipartiteHelper(const Graph &graph, size_t numVertices,
+                                        std::vector<size_t> &color, size_t src) {
+    Matrix edges = graph.getMatrix(); // adjacency matrix
     color[src] = RED;
-
     std::queue<size_t> que;
     que.push(src);
 
@@ -291,14 +279,18 @@ bool Algorithms::isBipartiteHelper(const Matrix &edges, size_t numVertices,
         // If self Loop exists, then adjacency matrix
         // will have 1 in the diagonal element
         // and we have to return false in case of  adjacency matrix
-        if(edges[vertex][vertex] != NONE_EDGE) return false;
+        if(edges[vertex][vertex] != NONE_EDGE) {
+            return false;
+        }
 
         for(size_t neighbor = START; neighbor < numVertices; ++neighbor) {
             if(edges[vertex][neighbor] != NONE_EDGE) {
                 if(color[neighbor] == NO_COLOR) {
-                    color[neighbor] = (color[vertex] == RED) ? BLUE : RED;
+                    color[neighbor] = color[vertex] == RED ? BLUE : RED;
                     que.push(neighbor);
-                } else if(color[neighbor] == color[vertex]) {
+                }
+
+                else if(color[neighbor] == color[vertex]) {
                     return false;
                 }
             }
@@ -307,39 +299,32 @@ bool Algorithms::isBipartiteHelper(const Matrix &edges, size_t numVertices,
     return true;
 }
 
-//todo: Check if the graph contain cycle, if the graph contain a cycle with odd number of vertices, then the graph is not 2 colorable.
 string Algorithms::isBipartite(const Graph &graph) {
-
 
     size_t numVertices = graph.getNumOfVertices();
 
-    // //  cycled graph with n vertices is 2 colorable if and only if n is even number
-    // // negativeCycle(graph) != FAIL - if and only if the graph contains a negative cycle
-    // if(graph.getIsWeightedGraph()){
-    //     if((isContainsCycle(graph) && negativeCycle(graph).compare(FAIL) != 0) == true && numVertices % 2 != 0) return FAIL;
-    // }else {
-    //     if(isContainsCycle(graph) && numVertices % 2 != 0) return FAIL;
-    // }
     // Create a vector to store the color of each vertex
-    vector<int> colored(numVertices, NO_COLOR);
+    vector<size_t> colored(numVertices, NO_COLOR);
 
     // Check if the graph is bipartite and update the color of each vertex
     for (size_t vertex = START; vertex < numVertices; ++vertex) {
         if (colored[vertex] == NO_COLOR) {
-            if (!isBipartiteHelper(graph.getMatrix(), numVertices, vertex, colored)) {
+            ;
+            if (!isBipartiteHelper(graph, numVertices, colored, vertex)) {
                 return FAIL;
             }
         }
     }
 
-    std::vector<size_t> groupA, groupB;
+    std::vector<size_t> groupA;
+    std::vector<size_t> groupB;
 
     // Separate the vertices into two sets based on their colors
-    for (size_t vertix = START; vertix < numVertices; ++vertix) {
-        if (colored[vertix] == RED) {
-            groupA.push_back(vertix);
-        } else if (colored[vertix] == BLUE) {
-            groupB.push_back(vertix);
+    for (size_t vertex = START; vertex < numVertices; ++vertex) {
+        if (colored[vertex] == RED) {
+            groupA.push_back(vertex);
+        } else if (colored[vertex] == BLUE) {
+            groupB.push_back(vertex);
         }
     }
 
@@ -359,12 +344,10 @@ string Algorithms::isBipartite(const Graph &graph) {
 
     // Remove the last comma and space, and add a closing brace
     strGroupBVertices = strGroupBVertices.substr(START, strGroupBVertices.length() - 2) + "}";
-    std::cout << strGroupAVertices << std::endl;
-    std::cout << strGroupBVertices << std::endl;
     return "The graph is bipartite: " + strGroupAVertices + ", " + strGroupBVertices;
 }
 
-string Algorithms::reconstructCycle(size_t startVertex, size_t endVertex, const std::vector<size_t>& prev) {
+string Algorithms::reconstructCycle(size_t startVertex, const std::vector<size_t>& prev, size_t endVertex) {
 
     std::vector<size_t> cycle;
 
@@ -398,7 +381,9 @@ string Algorithms::negativeCycle(const Graph &graph)
     vector<int> dist(numVertices, DEF_MAX_INT);
     vector<size_t> prev(numVertices, DEF_MAX_SIZE_T);
 
-    if(algoBF(graph, dist, prev) == false) return FAIL;
+    if(!algoBF(graph, dist, prev)) {
+        return FAIL;
+    }
 
     string pathStr = FAIL;
     // Check for negative cycles
@@ -406,7 +391,7 @@ string Algorithms::negativeCycle(const Graph &graph)
         for(size_t toVerticesY = START; toVerticesY < numVertices; ++toVerticesY) {
             if(edges[verticesX][toVerticesY] != NONE_EDGE) {
                 if(dist[verticesX] + edges[verticesX][toVerticesY] < dist[toVerticesY]) {
-                    pathStr = reconstructCycle(verticesX, toVerticesY, prev);
+                    pathStr = reconstructCycle(verticesX, prev, toVerticesY );
                 }
             }
         }
