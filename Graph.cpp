@@ -9,35 +9,38 @@ using namespace ariel;
 typedef std::vector<std::vector<int>> Matrix;
 
 
-Graph::Graph() : isUndirectedGraph(false), isWeightedGraph(false) {};
-
+Graph::Graph() : isUndirectedGraph(false), isWeightedGraph(false) {}
+Graph::~Graph() = default;
 
 
 void Graph::updateGraphProperty() 
+{
+	// Get the size of the matrix
+	this->numVertices = myMatrix.size();
+	// Transpose the matrix, initial with row, column size.
+	Matrix transpose(this->numVertices, std::vector<int>(this->numVertices));
+
+	// Iterate over the matrix and fill the transpose matrix
+	for (std::size_t vertexA = 0; vertexA < this->numVertices; ++vertexA)
 	{
-		// Get the size of the matrix
-		this->numVertices = myMatrix.size();
-		// Transpose the matrix, initial with row, column size.
-		Matrix transpose(this->numVertices, std::vector<int>(this->numVertices));
+		for (std::size_t vertexB = 0; vertexB < this->numVertices; ++vertexB) {
+			transpose[vertexB][vertexA] = myMatrix[vertexA][vertexB];
 
-		// Iterate over the matrix and fill the transpose matrix
-		for (std::size_t i = 0; i < this->numVertices; ++i)
-		{
-			for (std::size_t j = 0; j < this->numVertices; ++j) {
-				transpose[j][i] = myMatrix[i][j];
+			if ( myMatrix[vertexA][vertexB] != NONE_EDGE ) {
+				this->numEdges++;
 
-				if ( myMatrix[i][j] != NONE_EDGE ) {
-					this->numEdges++;
-
-					if(myMatrix[i][j] != NONE_WEIGHTED_EDGE && this->isWeightedGraph == false) {
-						this->isWeightedGraph = true;
-					}
+				if(myMatrix[vertexA][vertexB] != NONE_WEIGHTED_EDGE && this->isWeightedGraph == false) {
+					this->isWeightedGraph = true;
 				}
 			}
 		}
-		this->isUndirectedGraph = (myMatrix == transpose);
 	}
+	this->myTransposeMatrix = transpose;
+	this->isUndirectedGraph = (myMatrix == transpose);
+}
 
+// Getter for myTransposeMatrix
+const Matrix& Graph::getTransposeMatrix() const {return myTransposeMatrix;}
 
 // Getter for myMatrix
 const Matrix& Graph::getMatrix() const {return myMatrix;}
