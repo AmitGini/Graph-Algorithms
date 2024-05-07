@@ -1,8 +1,8 @@
 #include <iostream>
 #include "Graph.hpp"
 
-#define UN_WEIGHTED_EDGE_VALUE 1
-#define NO_EDGE_VALUE 0
+#define NONE_WEIGHTED_EDGE 1
+#define NONE_EDGE 0
 
 using namespace ariel;
 
@@ -16,22 +16,22 @@ Graph::Graph() : isUndirectedGraph(false), isWeightedGraph(false) {};
 void Graph::updateGraphProperty() 
 	{
 		// Get the size of the matrix
-		std::size_t matrixSize = myMatrix.size();
+		this->numVertices = myMatrix.size();
 		// Transpose the matrix, initial with row, column size.
-		Matrix transpose(matrixSize, std::vector<int>(matrixSize));
+		Matrix transpose(this->numVertices, std::vector<int>(this->numVertices));
 
 		// Iterate over the matrix and fill the transpose matrix
-		for (std::size_t i = 0; i < matrixSize; ++i) 
+		for (std::size_t i = 0; i < this->numVertices; ++i)
 		{
-			for (std::size_t j = 0; j < matrixSize; ++j) 
-			{
+			for (std::size_t j = 0; j < this->numVertices; ++j) {
 				transpose[j][i] = myMatrix[i][j];
 
-				if ( !(this->isUndirectedGraph) 
-					&& myMatrix[i][j] != NO_EDGE_VALUE 
-					&& myMatrix[i][j] != UN_WEIGHTED_EDGE_VALUE ) 
-				{
-					this->isWeightedGraph = true;
+				if ( myMatrix[i][j] != NONE_EDGE ) {
+					this->numEdges++;
+
+					if(myMatrix[i][j] != NONE_WEIGHTED_EDGE && this->isWeightedGraph == false) {
+						this->isWeightedGraph = true;
+					}
 				}
 			}
 		}
@@ -47,6 +47,12 @@ bool Graph::getIsUndirectedGraph() const { return this->isUndirectedGraph; }
 
 // Getter for weighted graph status
 bool Graph::getIsWeightedGraph() const { return this->isWeightedGraph; }
+
+// Getter for the number of vertices
+size_t Graph::getNumOfVertices() const { return this->numVertices; }
+
+// Getter for the number of edges
+size_t Graph::getNumOfEdges() const { return this->numEdges; }
 
 // Load the graph from the input matrix
 void Graph::loadGraph(const Matrix& inputMatrix)

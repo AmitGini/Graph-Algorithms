@@ -8,22 +8,26 @@ namespace ariel {
 
 	class Graph {
 		private:
-			Matrix myMatrix; 
-			bool isUndirectedGraph;
-			bool isWeightedGraph;
+		Matrix myMatrix;
+		std::size_t numVertices;
+		std::size_t numEdges;
+		bool isUndirectedGraph;
+		bool isWeightedGraph;
 
-			void updateGraphProperty();
+		void updateGraphProperty();
 
 		public:
-			Graph();
+		Graph();
 
-			// Getter methods
-            const Matrix& getMatrix() const;
-            bool getIsUndirectedGraph() const;
-            bool getIsWeightedGraph() const;
+		// Getter methods
+		const Matrix& getMatrix() const;
+		bool getIsUndirectedGraph() const;
+		bool getIsWeightedGraph() const;
+		std::size_t getNumOfVertices() const;
+		std::size_t getNumOfEdges() const;
 
-			void loadGraph(const Matrix& matrix);
-			void printGraph() const;
+		void loadGraph(const Matrix& matrix);
+		void printGraph() const;
 	};
 }
 
