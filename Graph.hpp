@@ -9,8 +9,9 @@ namespace ariel {
 	class Graph {
 		private:
 		Matrix myMatrix;
-		std::size_t numVertices;
-		std::size_t numEdges;
+		Matrix myTransposeMatrix;
+		std::size_t numVertices{};
+		std::size_t numEdges{};
 		bool isUndirectedGraph;
 		bool isWeightedGraph;
 
@@ -18,9 +19,11 @@ namespace ariel {
 
 		public:
 		Graph();
+		~Graph();
 
 		// Getter methods
 		const Matrix& getMatrix() const;
+		const Matrix& getTransposeMatrix() const;
 		bool getIsUndirectedGraph() const;
 		bool getIsWeightedGraph() const;
 		std::size_t getNumOfVertices() const;
