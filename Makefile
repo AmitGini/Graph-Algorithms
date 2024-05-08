@@ -4,7 +4,8 @@ CXX=clang++
 CXXFLAGS=-g -std=c++11 -Werror -Wsign-conversion 
 VALGRIND_FLAGS=-v --leak-check=full --show-leak-kinds=all  --error-exitcode=99
 
-SOURCES=Graph.cpp Algorithms.cpp TestCounter.cpp Test.cpp
+SOURCES=Graph.cpp Algorithms.cpp TestCounter.cpp Test.cpp AlgorithmsTest.cpp
+TEST_OBJECTS = TestCounter.o Test.o AlgorithmsTest.o
 OBJECTS=$(subst .cpp,.o,$(SOURCES))
 
 run: demo
@@ -13,7 +14,7 @@ run: demo
 demo: Demo.o $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $^ -o demo
 
-test: TestCounter.o Test.o $(OBJECTS)
+test: $(TEST_OBJECTS) $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $^ -o test
 
 tidy:

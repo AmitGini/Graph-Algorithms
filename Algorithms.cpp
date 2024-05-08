@@ -15,7 +15,7 @@ constexpr size_t NO_COLOR = 0;
 constexpr size_t RED = 1;
 constexpr size_t BLUE = 2;
 constexpr const char* FAIL = "0"; // isBipartite / shortestPath
-
+constexpr const int  NO_CYCLE = -1;
 //BFS
 constexpr size_t WHITE = 0;
 constexpr size_t GRAY = 1;
@@ -127,7 +127,7 @@ string Algorithms::shortestPath(const Graph &graph, size_t src, size_t dest){
     }
 
     else {
-        if(!algoBF(graph,dist, prev)) {
+        if(!BF(graph,dist, prev)) {
             return FAIL;
         }
     }
@@ -203,39 +203,43 @@ bool Algorithms::algoDFS(const Graph &graph,
     return false;
 }
 
-bool Algorithms::algoBF(const Graph &graph,
-                            vector<int> &dist,
-                            vector<size_t> &prev) {
-
-    Matrix edges = graph.getMatrix(); // adjacency matrix
+int Algorithms::BF(const Graph &graph, vector<int> &dist, vector<size_t> &prev) {
+    Matrix edges = graph.getMatrix();
     size_t numVertices = graph.getNumOfVertices(); // number of rows or columns is the number of vertices
 
-    // Set the distance of the source vertex to 0
+    dist.assign(numVertices, DEF_MAX_INT);
+    prev.assign(numVertices, DEF_MAX_SIZE_T);  // Use -1 to indicate no predecessor
+
     dist[START] = 0;
 
     // Relax the edges |V| - 1 times
-    for(size_t verticsXTo = START; verticsXTo < numVertices - 1; ++verticsXTo) {
-        for(size_t vericesY = START; vericesY < numVertices; ++vericesY) {
-            if(edges[verticsXTo][vericesY] != NONE_EDGE) {
-                if(dist[verticsXTo] + edges[verticsXTo][vericesY] < dist[vericesY]) {
-                    dist[vericesY] = dist[verticsXTo] + edges[verticsXTo][vericesY];
+    for(size_t relax = 0; relax < numVertices -1; ++relax) {
+        for(size_t verticsXTo = START; verticsXTo < numVertices; ++verticsXTo) {
+            for(size_t vericesY = START; vericesY < numVertices; ++vericesY) {
+
+                if(edges[verticsXTo][vericesY] != NONE_EDGE) {
+
+                    if(dist[verticsXTo] + edges[verticsXTo][vericesY] < dist[vericesY]) {
+                        dist[vericesY] = dist[verticsXTo] + edges[verticsXTo][vericesY];
+                        prev[vericesY] = verticsXTo;
+                    }
                 }
             }
         }
     }
 
     // Check for negative cycles
-    for(size_t verticsXTo = START; verticsXTo < numVertices - 1; ++verticsXTo) {
-        for(size_t vericesY = START; vericesY < numVertices; ++vericesY) {
-            if(edges[verticsXTo][vericesY] != NONE_EDGE) {
-                if(dist[verticsXTo] + edges[verticsXTo][vericesY] < dist[vericesY]) {
-                    return true;
+    for(size_t verticsXTo = START; verticsXTo < numVertices; ++verticsXTo) {
+        for(size_t verticesY = START; verticesY < numVertices; ++verticesY) {
+            if(edges[verticsXTo][verticesY] != NONE_EDGE) {
+                if(dist[verticsXTo] + edges[verticsXTo][verticesY] < dist[verticesY]) {
+                    return static_cast<int>(verticsXTo);
                 }
             }
         }
     }
 
-    return false;
+    return -1;
 }
 
 
@@ -257,7 +261,7 @@ bool Algorithms::isContainsCycle(const Graph &graph){
                 }
             }
         }
-        return algoBF(tempGraph, dist, prev);
+        return BF(tempGraph, dist, prev);
     }
 
         return algoDFS(graph,dist,prev);
@@ -347,55 +351,52 @@ string Algorithms::isBipartite(const Graph &graph) {
     return "The graph is bipartite: " + strGroupAVertices + ", " + strGroupBVertices;
 }
 
-string Algorithms::reconstructCycle(size_t startVertex, const std::vector<size_t>& prev, size_t endVertex) {
+string Algorithms::reconstructCycle( size_t startVertex, const vector<size_t>& prev) {
 
-    std::vector<size_t> cycle;
+    std::vector<size_t> cycleVertices;
+    size_t currentVertex = startVertex;
 
-    // Start from the end vertex and follow predecessors to reconstruct the cycle
-    for (size_t currVertex = endVertex; ; currVertex = prev[currVertex]) {
-        cycle.push_back(currVertex);
-        if (currVertex == startVertex && cycle.size() > 1) {
-            break;  // Once we reach the start vertex again, we complete the cycle
-        }
-    }
+    do {
+        cycleVertices.push_back(currentVertex);
+        currentVertex = prev[currentVertex];
+    } while(currentVertex != startVertex);
 
-    cycle.push_back(startVertex);  // Complete the cycle by adding the start vertex at the end
+    // Add the start vertex again to complete the cycle visually
+    cycleVertices.push_back(startVertex);
 
-    // To ensure the cycle is readable from start to finish, reverse the vector
-    std::reverse(cycle.begin(), cycle.end());
+    // Reverse the vector to get the correct order of vertices
+    std::reverse(cycleVertices.begin(), cycleVertices.end());
 
-    // Build the string representation of the cycle
+    // Build the cycle string
     std::string cycleStr = "Cycle: ";
-    for (size_t vertex : cycle) {
-        cycleStr += std::to_string(vertex) + "->";
+    for (size_t indexVertex = START; indexVertex < cycleVertices.size(); ++indexVertex) {
+        if (indexVertex > START) { // No need for -> in the first iteration
+            cycleStr += "->";
+        }
+        cycleStr += std::to_string(cycleVertices[indexVertex]);
     }
-    cycleStr = cycleStr.substr(START, cycleStr.length() - 2);
+
     return cycleStr;
 }
 
 // This function is used to check if there is a negative cycle in the graph and return the proper string.
 string Algorithms::negativeCycle(const Graph &graph)
 {
-    Matrix edges = graph.getMatrix(); // adjacency matrix
     size_t numVertices = graph.getNumOfVertices(); // number of rows or columns is the number of vertices
     vector<int> dist(numVertices, DEF_MAX_INT);
     vector<size_t> prev(numVertices, DEF_MAX_SIZE_T);
 
-    if(!algoBF(graph, dist, prev)) {
+    int  srcCycle = BF(graph, dist, prev); //return index in the cycle
+
+    string pathStr = FAIL; //default value
+
+    if(srcCycle < 0) {
         return FAIL;
     }
 
-    string pathStr = FAIL;
-    // Check for negative cycles
-    for(size_t verticesX = START; verticesX < numVertices - 1; ++verticesX) {
-        for(size_t toVerticesY = START; toVerticesY < numVertices; ++toVerticesY) {
-            if(edges[verticesX][toVerticesY] != NONE_EDGE) {
-                if(dist[verticesX] + edges[verticesX][toVerticesY] < dist[toVerticesY]) {
-                    pathStr = reconstructCycle(verticesX, prev, toVerticesY );
-                }
-            }
-        }
-    }
+    pathStr = reconstructCycle(static_cast<size_t>(srcCycle), prev);
+
     return pathStr;
 }
+
 
