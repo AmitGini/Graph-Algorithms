@@ -12,8 +12,8 @@ namespace ariel {
 		Matrix myTransposeMatrix;
 		std::size_t numVertices{};
 		std::size_t numEdges{};
-		bool isUndirectedGraph;
-		bool isWeightedGraph;
+		bool isUndirect;
+		bool isWeighted;
 
 		void updateGraphProperty();
 
@@ -24,8 +24,8 @@ namespace ariel {
 		// Getter methods
 		const Matrix& getMatrix() const;
 		const Matrix& getTransposeMatrix() const;
-		bool getIsUndirectedGraph() const;
-		bool getIsWeightedGraph() const;
+		bool isUndirectedGraph() const;
+		bool isWeightedGraph() const;
 		std::size_t getNumOfVertices() const;
 		std::size_t getNumOfEdges() const;
 
