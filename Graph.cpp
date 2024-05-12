@@ -63,14 +63,10 @@ bool Graph::isWeightedGraph() const { return this->isWeighted; }
 // Getter for the number of vertices
 size_t Graph::getNumOfVertices() const { return this->numVertices; }
 
-// Getter for the number of edges
-size_t Graph::getNumOfEdges() const { return this->numEdges; }
-
 // Load the graph from the input matrix
 void Graph::loadGraph(const Matrix& inputMatrix)
 {
 	// init / clean last uploaded graph.
-	this->numEdges = 0;
 	this->numVertices = 0;
 	this->isWeighted = false;
 	this->isUndirect = false;

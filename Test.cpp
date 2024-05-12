@@ -43,11 +43,6 @@ TEST_CASE("Test shortestPath")
     g.loadGraph(graph2);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 4) == "0");
 }
-TEST_CASE("Test isContainsCycle")
-{
-
-}
-
 
 TEST_CASE("Test invalid graph")
 {

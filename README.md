@@ -18,29 +18,42 @@ Algorithms implementations on Graph represented by adjacency matrix.
 - `typedef vector<vector<int>> Matrix` - Defining new variable represented by 2 vectors of ints - (2D array).
 
 ## Graph:
-Class that represnted graph, using adjacency matrix with intergers values.
-### Graph:Fields:
+Class that represented graph, using adjacency matrix with integers values.
+### Graph:Constructors:
+- `Graph()` - Default Constructor
+- `~Graph()` - Destructor
+### Graph:Fields(private):
 - `Matrix` = `vector<vector<int>>` - Double array of integers
-- `bool isUndirectedGraph` - True - Undirected Graph, False - Directedas, default value false, after loading matrix updated if needed.
-- `bool isWeightedGraph` - True - Weighted Graph, False - Unweighted Graph, default value false, after loading matrix updated if needed.
+- `Matrix myTransposeMatrix` - The transpose of the matrix, updated after loading the matrix.
+- `size_t numVertices` - The number of vertices in the graph, updated after loading the matrix.
+- `bool isUndirect` - True - Undirected Graph, False - Directed, default value false, after loading matrix updated if needed.
+- `bool isWeighted` - True - Weighted Graph, False - Unweighted Graph, default value false, after loading matrix updated if needed.
 ### Graph Methods:
-**Getters Methods:**
-- `const Matrix& getMatrix() const` - Return the matrix 
-- `bool getIsUndirectedGraph() const` - Return if its undirected graph
-- `bool getIsWeightedGraph() const` - Return if its weighted graph
-
-**Other Methods:**
-- `void loadGraph(const Matrix matrixArg)` - To the graph we can load matrix only in the same row and column size.
+**Set Methods(private):**
+- `updateGraphProperty()` - Update the graph properties(transpose, isWeighted, isUndirect) after loading the matrix.
+**Set Methods(public):**
+- `void loadGraph(const Matrix matrixArg)` - load matrix to the graph, and calling updateGraphProperty() to update the graph properties.
 - `void printGraph() const` - Print the graph will print on the output screen the number of edges and vertices in the graph.
-
+**Getters Methods(public):**
+- `const Matrix& getMatrix() const` - Return the matrix 
+- `const Matrix& getTransposeMatrix() const` - Return the transpose matrix
+- `bool isUndirectedGraph() const` - Return if its undirected graph
+- `bool isWeightedGraph() const` - Return if its weighted graph
+- `size_t getNumVertices() const` - Return the number of vertices in the graph
 
 ## Algorithms:
 ### Fields
 `None`
 ### Algorithms Methods:
 - `static bool isConnected(const Graph &graph)` - Return 1 = True if the graph is connected else, 0 = False
-**Note!** - If the graph contains 0 vertices or 1 vertices method return 1 = True.
-- `static std::string shortestPath(const Graph &graph, int src, int dest)` - Return the minimum weight path, if not weights graph it will return the shortest path between 2 vertices, if there is no path -1.
-- `static std::string isContainsCycle(const Graph &graph)` - If the graph contains Cycle it will return the Cycle else, 0.
-- `static std::string isBipartite(const Graph &graph)` - If the graph can be Bipartite it will return the Bipartite Graphs else return 0.
-- `static std::string negativeCycle(const Graph &graph)` - If the graph contain negative cycle it will return that cycle else return > "There is not negative cycle".
+- `static isContainsCycle(const Graph &graph)` - Return 1 = True if the graph contains cycle else, 0 = False
+- `static string shortestPath(const Graph &graph, size_t src, size_t dest)` - Return the minimum weight/shortest path, if not weights graph it will return the shortest path between 2 vertices, if there is no path "0" == FAIL.
+- `static string isBipartite(const Graph &graph)` - Return "0" if there is no bipartite else return string of the groups A and B.
+- `static string negativeCycle(const Graph &graph)` - Return string of the negative cycle if there is one else return "0" == FAIL.
+
+### Helper Methods:
+- `static string BFS(const Graph &graph, vector<int> &dist, size_t src, vector<int> &prev, size_t dest)` - updating dist and prev vectors to reconstruct the shortest path of the graph from the source vertex.
+- `static string DFS(const Graph &graph, vector<int> &dist, vector<int> &prev)` - Return if the graph is connected.
+- `static string DFSVisit(const Graph &graph, size_t vertex, vector<size_t> &color, size_t currTime, vector<size_t> &discTime, vector<size_t> &finishTime, vector<int> &prev )` - DFSVisit method for DFS method.
+- `static int BF(const Graph &graph, size_t src, size_t dest)` - updating dist and prev vectors to reconstruct the shortest path of the graph from the source vertex, and also check if there is negative cycle, also return index that part of the negative cycle to reconstruct it.
+- `static isBipartiteHelper(const Graph &graph, vector<size_t> &color, size_t src)` - Helper method for isBipartite method.
