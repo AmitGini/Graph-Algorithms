@@ -26,11 +26,13 @@ Class that represented graph, using adjacency matrix with integers values.
 - `Matrix` = `vector<vector<int>>` - Double array of integers
 - `Matrix myTransposeMatrix` - The transpose of the matrix, updated after loading the matrix.
 - `size_t numVertices` - The number of vertices in the graph, updated after loading the matrix.
-- `bool isUndirect` - True - Undirected Graph, False - Directed, default value false, after loading matrix updated if needed.
+- `size_t numEdges` - The number of edges in the graph, updated after loading the matrix.
+- `bool isUndirected` - True - Undirected Graph, False - Directed, default value false, after loading matrix updated if needed.
 - `bool isWeighted` - True - Weighted Graph, False - Unweighted Graph, default value false, after loading matrix updated if needed.
+
 ### Graph Methods:
 **Set Methods(private):**
-- `updateGraphProperty()` - Update the graph properties(transpose, isWeighted, isUndirect) after loading the matrix.
+- `updateGraphProperty()` - Update the graph properties(transpose, isWeighted, isUndirected) after loading the matrix.
 **Set Methods(public):**
 - `void loadGraph(const Matrix matrixArg)` - load matrix to the graph, and calling updateGraphProperty() to update the graph properties.
 - `void printGraph() const` - Print the graph will print on the output screen the number of edges and vertices in the graph.
@@ -40,6 +42,7 @@ Class that represented graph, using adjacency matrix with integers values.
 - `bool isUndirectedGraph() const` - Return if its undirected graph
 - `bool isWeightedGraph() const` - Return if its weighted graph
 - `size_t getNumVertices() const` - Return the number of vertices in the graph
+- `size_t getNumEdges() const` - Return the number of edges in the graph
 
 ## Algorithms:
 ### Fields
@@ -47,7 +50,7 @@ Class that represented graph, using adjacency matrix with integers values.
 ### Algorithms Methods:
 - `static bool isConnected(const Graph &graph)` - Return 1 = True if the graph is connected else, 0 = False
 - `static isContainsCycle(const Graph &graph)` - Return 1 = True if the graph contains cycle else, 0 = False
-- `static string shortestPath(const Graph &graph, size_t src, size_t dest)` - Return the minimum weight/shortest path, if not weights graph it will return the shortest path between 2 vertices, if there is no path "0" == FAIL.
+- `static string shortestPath(const Graph &graph, size_t src, size_t dest)` - Return the minimum weight or shortest path, if not weights graph it will return the shortest path between 2 vertices, if there is no path "0" == FAIL.
 - `static string isBipartite(const Graph &graph)` - Return "0" if there is no bipartite else return string of the groups A and B.
 - `static string negativeCycle(const Graph &graph)` - Return string of the negative cycle if there is one else return "0" == FAIL.
 

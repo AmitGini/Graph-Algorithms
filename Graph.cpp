@@ -1,3 +1,4 @@
+//207275215
 #include <iostream>
 #include "Graph.hpp"
 
@@ -8,10 +9,8 @@ using namespace ariel;
 
 typedef std::vector<std::vector<int>> Matrix;
 
-
-Graph::Graph() : isUndirect(false), isWeighted(false) {}
+Graph::Graph() : numVertices(0), numEdges(0), isUndirected(false), isWeighted(false) {}
 Graph::~Graph() = default;
-
 
 void Graph::updateGraphProperty() 
 {
@@ -39,10 +38,10 @@ void Graph::updateGraphProperty()
 		}
 	}
 	this->myTransposeMatrix = transpose;
-	this->isUndirect = (myMatrix == transpose);
+	this->isUndirected = (myMatrix == transpose);
 
 	//If its true the the count of numEdges was not correct.
-	if(this->isUndirect) {
+	if(this->isUndirected) {
 		this->numEdges = (this->numEdges % 2 == 0) ? (this->numEdges / 2) : ((this->numEdges / 2) - 1);
 	}
 
@@ -55,7 +54,7 @@ const Matrix& Graph::getTransposeMatrix() const {return myTransposeMatrix;}
 const Matrix& Graph::getMatrix() const {return myMatrix;}
 
 // Getter for directed graph status
-bool Graph::isUndirectedGraph() const { return this->isUndirect; }
+bool Graph::isUndirectedGraph() const { return this->isUndirected; }
 
 // Getter for weighted graph status
 bool Graph::isWeightedGraph() const { return this->isWeighted; }
@@ -63,13 +62,16 @@ bool Graph::isWeightedGraph() const { return this->isWeighted; }
 // Getter for the number of vertices
 size_t Graph::getNumOfVertices() const { return this->numVertices; }
 
+// Getter for the number of edges
+size_t Graph::getNumOfEdges() const { return this->numEdges; }
+
 // Load the graph from the input matrix
 void Graph::loadGraph(const Matrix& inputMatrix)
 {
 	// init / clean last uploaded graph.
 	this->numVertices = 0;
 	this->isWeighted = false;
-	this->isUndirect = false;
+	this->isUndirected = false;
 
 	if(inputMatrix.empty())
 	{
@@ -85,16 +87,8 @@ void Graph::loadGraph(const Matrix& inputMatrix)
 	updateGraphProperty();
 }
 
-/*
-	This function iterates over each row in the matrix,
-	and then over each cell in the row.
-	If the cell is not zero, it increments the edge count.
-	Since this is an undirected graph,
-	each edge is counted twice (once for each vertex it connects),
-	so we divide the total count by 2 to get the actual number of edges.
-	Finally, it prints the number of vertices and edges.
-*/
-void Graph::printGraph() const{
-	std::cout << "Graph with " << this->numVertices << " vertices and " << this->numEdges << " edges." << std::endl;
+// Print the graph number of vertices and edges
+void Graph::printGraph() const {
+  std::cout<< "Graph with " << this->numVertices << " vertices and " << this->numEdges << " edges." << std::endl;
 }
 

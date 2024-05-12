@@ -1,7 +1,4 @@
-/*
- * Demo program for Exercise 2.
- * Author: Benjamin Saldman.
- */
+//207275215
 
 #include "Graph.hpp"
 #include "Algorithms.hpp"
