@@ -1,5 +1,5 @@
-//207275215
-//amitgini0369@gmail.com
+# 207275215
+# amitgini0369@gmail.com
 #!make -f
 
 CXX=clang++
