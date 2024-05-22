@@ -1,5 +1,5 @@
-//207275215
-//amitgini0369@gmail.com
+### 207275215
+### amitgini0369@gmail.com
 # Graph-Algorithms
 Algorithms implementations on Graph represented by adjacency matrix.
 
