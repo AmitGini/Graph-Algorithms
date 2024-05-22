@@ -1,4 +1,5 @@
 //207275215
+//amitgini0369@gmail.com
 #ifndef ALGORITHMS_HPP
 #define ALGORITHMS_HPP
 
