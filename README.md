@@ -29,6 +29,7 @@ Class that represented graph, using adjacency matrix with integers values.
 - `Matrix myTransposeMatrix` - The transpose of the matrix, updated after loading the matrix.
 - `size_t numVertices` - The number of vertices in the graph, updated after loading the matrix.
 - `size_t numEdges` - The number of edges in the graph, updated after loading the matrix.
+NOTE! number of edges in a direct graph that might have similar weight edges both ways will always count as 2 edges.
 - `bool isUndirected` - True - Undirected Graph, False - Directed, default value false, after loading matrix updated if needed.
 - `bool isWeighted` - True - Weighted Graph, False - Unweighted Graph, default value false, after loading matrix updated if needed.
 
